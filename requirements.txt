@@ -1,0 +1,5 @@
+aiohttp==3.9.5
+peewee==3.17.6
+peewee-async[postgresql]
+pydantic==2.8.2
+pydantic-settings==2.3.4
