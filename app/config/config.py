@@ -7,10 +7,12 @@ class ServerSettings(BaseSettings):
     POSTGRES_PASSWORD: int
     POSTGRES_USER: str
     POSTGRES_DATABASE:str
+    
+    LOG_LEVEL: str   
 
-    @property
-    def DB_URL(self):
-        return f'mysql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.POSTGRES_DATABASE}'        
+    TEST_POSTGRES_PASSWORD: str
+    TEST_POSTGRES_USER: str
+    TEST_POSTGRES_DATABASE: str
 
     model_config = SettingsConfigDict(env_file='.env')
 

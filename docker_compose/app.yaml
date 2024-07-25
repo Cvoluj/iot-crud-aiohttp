@@ -1,0 +1,39 @@
+version: "3.11"
+
+services:
+  iot-curd:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: iot-crud
+    image: iot-crud
+    env_file:
+      - ../.env
+    environment:
+      - 'POSTGRES_DATABASE=${DOCKER_POSTGRES_DATABASE}'
+      - 'POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASSWORD}'
+      - 'DB_HOST=${DOCKER_POSTGRES_HOST}'
+      - 'POSTGRES_USER=${DOCKER_POSTGRES_USER}'
+    ports:
+      - "${PORT}:8080"
+    command: "python main.py"
+    volumes:
+      - ../app/:/app/
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      - 'POSTGRES_DB=${DOCKER_POSTGRES_DATABASE}'
+      - 'POSTGRES_USER=${DOCKER_POSTGRES_USER}'
+      - 'POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASSWORD}'
+    ports:
+      - '${DOCKER_POSTGRES_PORT}:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+
+volumes:
+  db:
+    driver: local
