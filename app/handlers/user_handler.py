@@ -2,6 +2,7 @@ import jwt
 import bcrypt
 import logging
 from aiohttp import web
+from peewee import DoesNotExist
 from services import UserService
 from database.models import ApiUser
 
@@ -74,6 +75,8 @@ class UserHandler:
         
             await self.user_service.delete_user(id)
             return web.Response(status=200)
+        except DoesNotExist:
+            return web.Response(status=404, text='Not found') 
         except Exception as e:
             self.logger.error(f"Error deleting user: {e}")
             return web.Response(status=500, text='Internal Server Error')

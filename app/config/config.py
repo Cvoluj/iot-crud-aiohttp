@@ -12,10 +12,6 @@ class ServerSettings(BaseSettings):
     
     LOG_LEVEL: str   
 
-    TEST_POSTGRES_PASSWORD: str
-    TEST_POSTGRES_USER: str
-    TEST_POSTGRES_DATABASE: str
-
     model_config = SettingsConfigDict(env_file='.env')
 
 

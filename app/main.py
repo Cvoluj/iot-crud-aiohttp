@@ -3,6 +3,7 @@ from aiohttp import web
 import aiohttp
 
 from database.database import database
+from database.models import ApiUser, Location, Device
 from utils.initialize_database import initialize_database
 from repositories import DeviceRepository, LocationRepository, UserRepository
 from services import DeviceService, LocationService, UserService
@@ -12,15 +13,15 @@ from middlewares import auth_middleware
 
 initialize_database(database)
 
-device_repository = DeviceRepository()
+device_repository = DeviceRepository(Device)
 device_service = DeviceService(device_repository)
 device_handler = DeviceHandler(device_service)
 
-location_repository = LocationRepository()
+location_repository = LocationRepository(Location)
 location_service = LocationService(location_repository)
 location_handler = LocationHandler(location_service)
 
-user_repository = UserRepository()
+user_repository = UserRepository(ApiUser)
 user_service = UserService(user_repository)
 user_handler = UserHandler(user_service)
 
@@ -42,6 +43,11 @@ app.router.add_put('/users/{id}', user_handler.update_user)
 app.router.add_delete('/users/{id}', user_handler.delete_user)
 
 app.router.add_post('/login', user_handler.login)
+
+app.router.add_post('/location', location_handler.create_location)
+app.router.add_get('/location/{id}', location_handler.get_location)
+app.router.add_put('/location/{id}', location_handler.update_location)
+app.router.add_delete('/location/{id}', location_handler.delete_location)
 
 
 async def main():
