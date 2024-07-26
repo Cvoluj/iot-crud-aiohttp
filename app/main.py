@@ -4,21 +4,44 @@ import aiohttp
 
 from database.database import database
 from utils.initialize_database import initialize_database
-from repositories.device_repository import DeviceRepository
-from services import DeviceService
-from handlers import DeviceHandler
+from repositories import DeviceRepository, LocationRepository, UserRepository
+from services import DeviceService, LocationService, UserService
+from handlers import DeviceHandler, LocationHandler, UserHandler
+
+from middlewares import auth_middleware
 
 initialize_database(database)
 
-device_repository = DeviceRepository(database)
+device_repository = DeviceRepository()
 device_service = DeviceService(device_repository)
 device_handler = DeviceHandler(device_service)
 
-app = web.Application()
+location_repository = LocationRepository()
+location_service = LocationService(location_repository)
+location_handler = LocationHandler(location_service)
+
+user_repository = UserRepository()
+user_service = UserService(user_repository)
+user_handler = UserHandler(user_service)
+
+midllewares = [
+    auth_middleware,
+]
+
+app = web.Application(
+    middlewares=midllewares
+    )
 app.router.add_post('/devices', device_handler.create_device)
 app.router.add_get('/devices/{id}', device_handler.get_device)
 app.router.add_put('/devices/{id}', device_handler.update_device)
 app.router.add_delete('/devices/{id}', device_handler.delete_device)
+
+app.router.add_post('/users', user_handler.create_user)
+app.router.add_get('/users/{id}', user_handler.get_user)
+app.router.add_put('/users/{id}', user_handler.update_user)
+app.router.add_delete('/users/{id}', user_handler.delete_user)
+
+app.router.add_post('/login', user_handler.login)
 
 
 async def main():
@@ -29,4 +52,6 @@ async def main():
     await asyncio.Event().wait()    
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    loop = asyncio.SelectorEventLoop()
+    asyncio.set_event_loop(loop)
+    web.run_app(app=app, loop=loop)

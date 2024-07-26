@@ -1,20 +1,12 @@
 from database.models import Device
-import peewee_async
+from database import get_async_database
 
 class DeviceRepository:
-    def __init__(self, database):
-        
-        """
-        Enabling async peewee Manager
-        """
-        self.database = database
-        self.objects = peewee_async.Manager(database)
-        database.set_allow_sync(False)
+    def __init__(self):
+        self.objects = get_async_database()
 
     async def create(self, **kwargs):
-        print('here')
         device = await self.objects.create(Device, **kwargs)
-        await self.database.close()
         return device
 
     async def get(self, device_id):

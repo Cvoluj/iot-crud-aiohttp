@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class ServerSettings(BaseSettings):
+    SECRET_KEY: str
+    
     DB_PORT: int
     DB_HOST: str
     POSTGRES_PASSWORD: int
